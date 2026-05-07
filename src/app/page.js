@@ -6,6 +6,7 @@ import ramos from '../data/ramos.json';
 export default function Home() {
   const [aprobados, setAprobados] = useState([]);
 
+  // Cargar progreso al iniciar
   useEffect(() => {
     const guardados = localStorage.getItem('malla-progreso');
     if (guardados) {
@@ -17,10 +18,12 @@ export default function Home() {
     }
   }, []);
 
+  // Guardar progreso cuando cambia
   useEffect(() => {
     localStorage.setItem('malla-progreso', JSON.stringify(aprobados));
   }, [aprobados]);
 
+  // Lógica de aprobación con bloqueo de seguridad
   const toggleAprobado = (id, estaAbierto) => {
     setAprobados(prev => {
       if (prev.includes(id)) {
@@ -41,9 +44,16 @@ export default function Home() {
 
   const semestres = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
+  // --- LÓGICA DE PORCENTAJE REAL ---
+  // Filtramos los aprobados para que solo cuenten los que existen en el JSON actual.
+  // Esto soluciona el error del "105%" causado por IDs antiguos en la memoria.
+  const aprobadosValidos = aprobados.filter(id => ramos.some(r => r.id === id));
+  const porcentaje = Math.round((aprobadosValidos.length / (ramos.length || 1)) * 100);
+
   return (
     <main className="min-h-screen bg-[#050505] text-slate-200 font-sans select-none">
       
+      {/* HEADER */}
       <header className="sticky top-0 z-30 bg-[#050505]/95 backdrop-blur-md border-b border-white/10 p-3 md:p-6">
         <div className="max-w-[1800px] mx-auto flex justify-between items-center">
           <div>
@@ -54,7 +64,7 @@ export default function Home() {
           </div>
           <div className="bg-blue-600/10 px-3 py-1 rounded-lg border border-blue-500/20">
             <span className="text-sm md:text-xl font-black text-blue-400">
-              {Math.round((aprobados.length / (ramos.length || 1)) * 100)}%
+              {porcentaje}%
             </span>
           </div>
         </div>

@@ -38,7 +38,7 @@ export default function Home() {
         <header className="mb-10 flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-6 gap-4">
           <div>
             <h1 className="text-3xl font-black tracking-tighter text-white">
-              MY MALLA <span className="text-blue-500">ICI</span>
+              Ingeniería Civil Industrial <span className="text-blue-500">UDP</span>
             </h1>
             <a 
               href="https://github.com/miguelesss" 

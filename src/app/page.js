@@ -5,7 +5,6 @@ import ramos from '../data/ramos.json';
 
 export default function Home() {
   const [aprobados, setAprobados] = useState([]);
-  const [enfocado, setEnfocado] = useState(null);
 
   useEffect(() => {
     const guardados = localStorage.getItem('malla-progreso');
@@ -23,9 +22,9 @@ export default function Home() {
   };
 
   const getColorArea = (id) => {
-    if (id.startsWith('CBM') || id.startsWith('CBF') || id.startsWith('CBQ')) return '#3b82f6'; // Azul - Ciencias Básicas
-    if (id.startsWith('CII') || id.startsWith('CIT')) return '#eab308'; // Amarillo - Ciencias de la Ingeniería
-    if (id.startsWith('FIC') || id.startsWith('CFG') || id.startsWith('CIG')) return '#f97316'; // Naranja - Transversales/Inglés
+    if (id.startsWith('CBM') || id.startsWith('CBF') || id.startsWith('CBQ')) return '#3b82f6'; // Azul - Básicas
+    if (id.startsWith('CII') || id.startsWith('CIT')) return '#eab308'; // Amarillo - Especialidad
+    if (id.startsWith('FIC') || id.startsWith('CFG') || id.startsWith('CIG')) return '#f97316'; // Naranja - Transversales
     return '#64748b';
   };
 
@@ -34,74 +33,100 @@ export default function Home() {
   return (
     <main className="p-4 md:p-8 min-h-screen bg-[#050505] text-slate-200 font-sans select-none">
       <div className="max-w-[1800px] mx-auto">
-        <header className="mb-8 flex justify-between items-center border-b border-white/10 pb-6">
+        
+        {/* HEADER SIN IMAGEN */}
+        <header className="mb-10 flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-6 gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-white">
-            INGENIERIA CIVIL INDUSTRIAL<span className="text-blue-500"> UDP</span>
+            <h1 className="text-3xl font-black tracking-tighter text-white">
+              MY MALLA <span className="text-blue-500">ICI</span>
             </h1>
-            <p className="text-[10px] font-bold text-slate-500 tracking-[0.3em] uppercase">Malla 2020</p>
+            <a 
+              href="https://github.com/miguelesss" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[11px] font-bold text-slate-500 hover:text-blue-400 transition-colors tracking-widest uppercase flex items-center gap-2 mt-1"
+            >
+              <span>GitHub</span>
+              <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
+              <span>@miguelesss</span>
+            </a>
           </div>
-          <div className="bg-white/5 px-4 py-2 rounded-2xl border border-white/10 text-center">
-            <span className="block text-[10px] font-black text-slate-500 uppercase">Completado</span>
-            <span className="text-xl font-black text-emerald-400">
+
+          <div className="bg-white/5 px-6 py-2 rounded-xl border border-white/10 text-right">
+            <span className="block text-[10px] font-black text-slate-500 uppercase">Avance Carrera</span>
+            <span className="text-2xl font-black text-emerald-400">
               {Math.round((aprobados.length / ramos.length) * 100)}%
             </span>
           </div>
         </header>
 
         <div className="flex gap-4 overflow-x-auto pb-8 snap-x custom-scrollbar">
-          {semestres.map((sem) => (
-            <div key={sem} className="min-w-[200px] md:min-w-[240px] flex-1 snap-start">
-              <h3 className="text-center font-black text-slate-600 uppercase text-[9px] mb-4 tracking-widest">
-                Semestre {sem}
-              </h3>
-              
-              <div className="flex flex-col gap-3">
-                {ramos.filter(r => r.semestre === sem).map((ramo) => {
-                  const esAprobado = aprobados.includes(ramo.id);
-                  const colorArea = getColorArea(ramo.id);
-                  const estaAbierto = ramo.prerrequisitos.every(p => aprobados.includes(p));
-                  
-                  return (
-                    <button 
-                      key={ramo.id}
-                      onClick={() => toggleAprobado(ramo.id)}
-                      className={`
-                        relative w-full text-left p-3 rounded-xl border-2 transition-all duration-200 active:scale-95
-                        ${esAprobado 
-                          ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]' 
-                          : estaAbierto 
-                            ? 'bg-white/5 border-white/20' 
-                            : 'bg-white/5 border-transparent opacity-30 grayscale'}
-                      `}
-                      style={!esAprobado && estaAbierto ? { borderLeftColor: colorArea, borderLeftWidth: '6px' } : {}}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <span className={`text-[8px] font-black tracking-widest ${esAprobado ? 'text-emerald-400' : 'text-slate-500'}`}>
-                          {ramo.id}
-                        </span>
-                        {esAprobado && <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />}
-                      </div>
+          {semestres.map((sem) => {
+            const ramosSemestre = ramos.filter(r => r.semestre === sem);
+            const totalCreditos = ramosSemestre.reduce((acc, r) => acc + r.creditos, 0);
+            const aprobadosSem = ramosSemestre
+              .filter(r => aprobados.includes(r.id))
+              .reduce((acc, r) => acc + r.creditos, 0);
 
-                      <h2 className="text-[11px] md:text-xs font-bold leading-tight mb-3 h-8 overflow-hidden">
-                        {ramo.nombre}
-                      </h2>
+            return (
+              <div key={sem} className="min-w-[200px] md:min-w-[240px] flex-1 snap-start">
+                <div className="text-center mb-6 py-2 bg-white/5 rounded-lg border border-white/5">
+                  <h3 className="font-black text-white uppercase text-[10px] tracking-widest">
+                    Semestre {sem}
+                  </h3>
+                  {/* CONTADOR DE CRÉDITOS */}
+                  <p className={`text-[10px] font-bold mt-1 ${aprobadosSem === totalCreditos ? 'text-emerald-400' : 'text-slate-500'}`}>
+                    {aprobadosSem} / {totalCreditos} CR
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-3">
+                  {ramosSemestre.map((ramo) => {
+                    const esAprobado = aprobados.includes(ramo.id);
+                    const colorArea = getColorArea(ramo.id);
+                    const estaAbierto = ramo.prerrequisitos.every(p => aprobados.includes(p));
+                    
+                    return (
+                      <button 
+                        key={ramo.id}
+                        onClick={() => toggleAprobado(ramo.id)}
+                        className={`
+                          relative w-full text-left p-3 rounded-xl border-2 transition-all duration-200 active:scale-95
+                          ${esAprobado 
+                            ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]' 
+                            : estaAbierto 
+                              ? 'bg-white/5 border-white/20' 
+                              : 'bg-white/5 border-transparent opacity-30 grayscale'}
+                        `}
+                        style={!esAprobado && estaAbierto ? { borderLeftColor: colorArea, borderLeftWidth: '6px' } : {}}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className={`text-[8px] font-black tracking-widest ${esAprobado ? 'text-emerald-400' : 'text-slate-500'}`}>
+                            {ramo.id}
+                          </span>
+                          {esAprobado && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                        </div>
 
-                      <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-black text-slate-500">{ramo.creditos} CR.</span>
-                        {!esAprobado && estaAbierto && (
-                          <span className="text-[8px] font-black text-white/40 uppercase">Disponible</span>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
+                        <h2 className="text-[10px] md:text-xs font-bold leading-tight mb-3 h-8 overflow-hidden uppercase">
+                          {ramo.nombre}
+                        </h2>
+
+                        <div className="flex justify-between items-center">
+                          <span className="text-[9px] font-black text-slate-500">{ramo.creditos} CR.</span>
+                          {!esAprobado && estaAbierto && (
+                            <span className="text-[8px] font-black text-blue-400 uppercase">Abierto</span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
-      
+
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar { height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }

@@ -37,7 +37,7 @@
   { "id": "CII-2253", "nombre": "Producción", "semestre": 7, "creditos": 6, "prerrequisitos": ["CII-2750"] },
   { "id": "CII-2102", "nombre": "Marketing", "semestre": 7, "creditos": 6, "prerrequisitos": ["CII-2100", "CII-1001"] },
   { "id": "CII-2003", "nombre": "Finanzas", "semestre": 7, "creditos": 6, "prerrequisitos": ["CII-2002"] },
-  { "id": "CII-2504", "nombre": "Data Science", "semestre": 8, "creditos": 6, "prerrequisitos": ["CII-2501", "CII-2756"] },
+  { "id": "CII-2504", "nombre": "Data Science", "semestre": 8, "creditos": 6, "prerrequisitos": ["CII-2501"] },
   { "id": "CII-2757", "nombre": "Simulación", "semestre": 8, "creditos": 6, "prerrequisitos": ["CII-2755"] },
   { "id": "CII-2254", "nombre": "Logística", "semestre": 8, "creditos": 6, "prerrequisitos": ["CII-2253"] },
   { "id": "CII-2103", "nombre": "Gestión Estratégica", "semestre": 8, "creditos": 6, "prerrequisitos": ["CII-2102", "CII-1001"] },
